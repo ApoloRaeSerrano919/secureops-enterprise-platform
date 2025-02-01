@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.pytest_cache/
+data/
+artifacts/
+mlflow.db
+mlruns/
+node_modules/
+services/event-gateway/node_modules/
+services/event-gateway/dist/
+*.egg-info/
+.coverage
+htmlcov/

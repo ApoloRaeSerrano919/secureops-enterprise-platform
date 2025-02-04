@@ -1,0 +1,6 @@
+# Published GitHub repository
+GITHUB_OWNER=ApoloRaeSerrano919
+GITHUB_REPO=secureops-enterprise-platform
+GITHUB_URL=https://github.com/ApoloRaeSerrano919/secureops-enterprise-platform
+VISIBILITY=public
+DEFAULT_BRANCH=main

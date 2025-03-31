@@ -27,3 +27,18 @@ class SecurityEvent(Base):
     correlated: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class Incident(Base):
+    __tablename__ = "incidents"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    incident_number: Mapped[str] = mapped_column(String(50), unique=True)
+    title: Mapped[str] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(40), default="OPEN", index=True)
+    severity: Mapped[str] = mapped_column(String(30), index=True)
+    risk_score: Mapped[float] = mapped_column(Float)
+    principal: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    primary_ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    assigned_to: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    ai_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+

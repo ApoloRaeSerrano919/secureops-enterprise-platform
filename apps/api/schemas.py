@@ -21,3 +21,8 @@ class IncidentCloseRequest(BaseModel):
 class AIInvestigationRequest(BaseModel):
     prompt: str | None = Field(default=None, max_length=4000)
 
+class ToolRequestCreate(BaseModel):
+    tool_name: str
+    arguments: dict
+    idempotency_key: str | None = None
+

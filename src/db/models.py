@@ -42,3 +42,8 @@ class Incident(Base):
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class IncidentEvent(Base):
+    __tablename__ = "incident_events"
+    incident_id: Mapped[int] = mapped_column(ForeignKey("incidents.id", ondelete="CASCADE"), primary_key=True)
+    event_id: Mapped[int] = mapped_column(ForeignKey("security_events.id", ondelete="CASCADE"), primary_key=True)
+

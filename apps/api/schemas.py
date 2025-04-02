@@ -26,3 +26,6 @@ class ToolRequestCreate(BaseModel):
     arguments: dict
     idempotency_key: str | None = None
 
+class ToolApprovalRequest(BaseModel):
+    decision: str
+    comment: str = ""

@@ -18,9 +18,6 @@ class IncidentAssignRequest(BaseModel):
 class IncidentCloseRequest(BaseModel):
     resolution: str = Field(min_length=3, max_length=2000)
 
-class AIInvestigationRequest(BaseModel):
-    prompt: str | None = Field(default=None, max_length=4000)
-
 class ToolRequestCreate(BaseModel):
     tool_name: str
     arguments: dict

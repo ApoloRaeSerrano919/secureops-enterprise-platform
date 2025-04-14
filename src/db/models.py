@@ -55,3 +55,17 @@ class ToolDefinition(Base):
     requires_approval: Mapped[bool] = mapped_column(Boolean, default=False)
     allowed_roles: Mapped[list] = mapped_column(JSON)
 
+class ToolRequest(Base):
+    __tablename__ = "tool_requests"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    incident_id: Mapped[int] = mapped_column(ForeignKey("incidents.id"), index=True)
+    requested_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    tool_name: Mapped[str] = mapped_column(String(120))
+    arguments: Mapped[dict] = mapped_column(JSON)
+    risk_level: Mapped[str] = mapped_column(String(30))
+    status: Mapped[str] = mapped_column(String(40), index=True)
+    idempotency_key: Mapped[str] = mapped_column(String(120), unique=True)
+    result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    completed_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
+

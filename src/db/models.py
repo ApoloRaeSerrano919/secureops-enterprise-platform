@@ -69,3 +69,12 @@ class ToolRequest(Base):
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
     completed_at: Mapped[object | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
+class ToolApproval(Base):
+    __tablename__ = "tool_approvals"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    tool_request_id: Mapped[int] = mapped_column(ForeignKey("tool_requests.id", ondelete="CASCADE"), index=True)
+    approver_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    decision: Mapped[str] = mapped_column(String(20))
+    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+

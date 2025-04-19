@@ -78,3 +78,12 @@ class ToolApproval(Base):
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class AuditEvent(Base):
+    __tablename__ = "audit_events"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    incident_id: Mapped[int | None] = mapped_column(ForeignKey("incidents.id"), nullable=True, index=True)
+    actor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    action: Mapped[str] = mapped_column(String(120), index=True)
+    event_metadata: Mapped[dict] = mapped_column("metadata", JSON)
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+

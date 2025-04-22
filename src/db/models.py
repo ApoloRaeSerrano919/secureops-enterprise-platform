@@ -87,3 +87,11 @@ class AuditEvent(Base):
     event_metadata: Mapped[dict] = mapped_column("metadata", JSON)
     created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+class EvaluationRun(Base):
+    __tablename__ = "evaluation_runs"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    name: Mapped[str] = mapped_column(String(200))
+    prompt_injection_block_rate: Mapped[float] = mapped_column(Float)
+    unsafe_tool_call_rate: Mapped[float] = mapped_column(Float)
+    passed: Mapped[bool] = mapped_column(Boolean)
+    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())

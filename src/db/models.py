@@ -47,6 +47,14 @@ class IncidentEvent(Base):
     incident_id: Mapped[int] = mapped_column(ForeignKey("incidents.id", ondelete="CASCADE"), primary_key=True)
     event_id: Mapped[int] = mapped_column(ForeignKey("security_events.id", ondelete="CASCADE"), primary_key=True)
 
+class ToolDefinition(Base):
+    __tablename__ = "tool_definitions"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), unique=True)
+    risk_level: Mapped[str] = mapped_column(String(30))
+    requires_approval: Mapped[bool] = mapped_column(Boolean, default=False)
+    allowed_roles: Mapped[list] = mapped_column(JSON)
+
 class ToolRequest(Base):
     __tablename__ = "tool_requests"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)

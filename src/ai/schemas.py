@@ -19,3 +19,10 @@ class RecommendedAction(BaseModel):
     requires_approval: bool = True
 
 
+class InvestigationResult(BaseModel):
+    summary: str = Field(min_length=1, max_length=4000)
+    severity_assessment: Literal["low", "medium", "high", "critical"]
+    confidence: float = Field(ge=0.0, le=1.0)
+    observations: list[EvidenceBackedObservation] = Field(default_factory=list, max_length=20)
+    hypotheses: list[Hypothesis] = Field(default_factory=list, max_length=10)
+    recommended_actions: list[RecommendedAction] = Field(default_factory=list, max_length=10)

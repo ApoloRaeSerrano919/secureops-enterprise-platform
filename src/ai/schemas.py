@@ -13,12 +13,6 @@ class Hypothesis(BaseModel):
     evidence_event_ids: list[int] = Field(default_factory=list)
 
 
-class RecommendedAction(BaseModel):
-    action: str = Field(min_length=1, max_length=200)
-    reason: str = Field(min_length=1, max_length=1200)
-    requires_approval: bool = True
-
-
 class InvestigationResult(BaseModel):
     summary: str = Field(min_length=1, max_length=4000)
     severity_assessment: Literal["low", "medium", "high", "critical"]

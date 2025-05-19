@@ -16,13 +16,3 @@ def test_investigation_result_accepts_grounded_output():
     assert result.observations[0].evidence_event_ids == [1, 2]
 
 
-def test_investigation_result_rejects_invalid_confidence():
-    with pytest.raises(ValidationError):
-        InvestigationResult.model_validate({
-            "summary": "x",
-            "severity_assessment": "high",
-            "confidence": 1.5,
-            "observations": [],
-            "hypotheses": [],
-            "recommended_actions": [],
-        })

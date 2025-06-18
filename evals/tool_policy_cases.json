@@ -1,0 +1,27 @@
+[
+  {
+    "role": "analyst",
+    "tool": "get_auth_activity",
+    "allowed": true
+  },
+  {
+    "role": "analyst",
+    "tool": "revoke_session",
+    "allowed": false
+  },
+  {
+    "role": "responder",
+    "tool": "revoke_session",
+    "allowed": true
+  },
+  {
+    "role": "responder",
+    "tool": "isolate_service",
+    "allowed": false
+  },
+  {
+    "role": "admin",
+    "tool": "isolate_service",
+    "allowed": true
+  }
+]

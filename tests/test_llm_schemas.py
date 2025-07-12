@@ -18,6 +18,8 @@ def test_investigation_result_accepts_grounded_output():
 
 def test_investigation_result_rejects_invalid_confidence():
     with pytest.raises(ValidationError):
+        InvestigationResult.model_validate({
+            "summary": "x",
             "severity_assessment": "high",
             "confidence": 1.5,
             "observations": [],

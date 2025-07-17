@@ -131,3 +131,13 @@ def upgrade() -> None:
     )
 
 
+def downgrade() -> None:
+    op.drop_table("evaluation_runs")
+    op.drop_table("audit_events")
+    op.drop_table("tool_approvals")
+    op.drop_table("tool_requests")
+    op.drop_table("tool_definitions")
+    op.drop_table("incident_events")
+    op.drop_table("incidents")
+    op.drop_table("security_events")
+    op.drop_table("users")

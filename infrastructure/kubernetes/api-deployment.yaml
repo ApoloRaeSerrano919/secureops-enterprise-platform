@@ -3,3 +3,46 @@ kind: Deployment
 metadata:
   name: secureops-api
   namespace: secureops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: secureops-api
+  template:
+    metadata:
+      labels:
+        app: secureops-api
+    spec:
+      serviceAccountName: secureops-api
+      containers:
+        - name: api
+          image: YOUR_ECR_REPO/secureops-api:latest
+          ports:
+            - containerPort: 8200
+          resources:
+            requests: {cpu: "250m", memory: "256Mi"}
+            limits: {cpu: "1000m", memory: "1Gi"}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: secureops-secrets
+                  key: database-url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: secureops-secrets
+                  key: redis-url
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secureops-secrets
+                  key: llm-api-key
+          readinessProbe:
+            httpGet: {path: /health, port: 8200}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: 8200}
+            initialDelaySeconds: 15
+            periodSeconds: 20

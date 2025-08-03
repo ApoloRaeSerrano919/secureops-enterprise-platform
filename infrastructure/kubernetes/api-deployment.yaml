@@ -1,5 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
+metadata:
+  name: secureops-api
+  namespace: secureops
 spec:
   replicas: 2
   selector:

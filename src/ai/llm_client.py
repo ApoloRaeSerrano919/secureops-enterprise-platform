@@ -12,3 +12,7 @@ class LLMConfigurationError(RuntimeError):
     pass
 
 
+class LLMProviderError(RuntimeError):
+    pass
+
+

@@ -1,5 +1,8 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
+metadata:
+  name: secureops-api
+  namespace: secureops
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

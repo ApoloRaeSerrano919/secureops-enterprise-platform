@@ -20,3 +20,9 @@ EVENT_BONUS = {
     "policy_block": 12,
 }
 
+def _risk(events: list[SecurityEvent]) -> float:
+    base = max((SEVERITY_WEIGHT.get(e.severity, 20) for e in events), default=0)
+    bonus = sum(EVENT_BONUS.get(e.event_type, 0) for e in events)
+    diversity = len({e.event_type for e in events}) * 3
+    return min(100.0, float(base + bonus + diversity))
+

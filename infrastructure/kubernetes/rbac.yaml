@@ -4,3 +4,4 @@ metadata:
   name: secureops
 ---
 apiVersion: v1
+kind: ServiceAccount

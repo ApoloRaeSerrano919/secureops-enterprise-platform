@@ -16,3 +16,8 @@ kind: Role
 metadata:
   name: secureops-runtime-reader
   namespace: secureops
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+---

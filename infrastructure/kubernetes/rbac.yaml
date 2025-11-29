@@ -26,3 +26,7 @@ kind: RoleBinding
 metadata:
   name: secureops-runtime-reader
   namespace: secureops
+subjects:
+  - kind: ServiceAccount
+    name: secureops-api
+    namespace: secureops

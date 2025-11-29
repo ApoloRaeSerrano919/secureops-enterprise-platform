@@ -30,3 +30,7 @@ subjects:
   - kind: ServiceAccount
     name: secureops-api
     namespace: secureops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: secureops-runtime-reader

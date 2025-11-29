@@ -19,6 +19,8 @@ class LLMProviderError(RuntimeError):
 def _extract_output_text(payload: dict[str, Any]) -> str:
     if isinstance(payload.get("output_text"), str) and payload["output_text"]:
         return payload["output_text"]
+
+    chunks: list[str] = []
     for item in payload.get("output", []) or []:
         for content in item.get("content", []) or []:
             if content.get("type") in {"output_text", "text"} and isinstance(content.get("text"), str):

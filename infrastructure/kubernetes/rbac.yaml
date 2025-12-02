@@ -12,6 +12,7 @@ metadata:
     eks.amazonaws.com/role-arn: REPLACE_WITH_IRSA_ROLE_ARN
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: secureops-runtime-reader
   namespace: secureops

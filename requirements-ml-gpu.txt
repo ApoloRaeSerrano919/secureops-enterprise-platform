@@ -1,0 +1,3 @@
+-r requirements-ml.txt
+# Optional CUDA dependency used by the QLoRA example. Install on a supported NVIDIA Linux environment.
+bitsandbytes>=0.46,<1

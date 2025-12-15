@@ -1,0 +1,6 @@
+# Full local stack including RAG embeddings + MLflow client (heavy).
+-r requirements-api.txt
+sentence-transformers==5.1.0
+torch>=2.6,<3
+transformers>=4.55,<5
+mlflow>=3.3,<4

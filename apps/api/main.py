@@ -20,3 +20,7 @@ app = FastAPI(
     description="Security event correlation with policy-gated response tools.",
 )
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+

@@ -24,3 +24,11 @@ app = FastAPI(
 def health():
     return {"status": "ok"}
 
+@app.post("/events")
+def create_event(
+    payload: SecurityEventCreate,
+    user: CurrentUser = Depends(get_current_user),
+):
+    result = ingest_event(payload.model_dump())
+    return result
+

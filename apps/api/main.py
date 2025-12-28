@@ -65,3 +65,13 @@ def list_incidents(
             ]
         }
 
+@app.get("/incidents/{incident_id}")
+def incident_detail(
+    incident_id: int,
+    user: CurrentUser = Depends(get_current_user),
+):
+    result = get_incident(incident_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="incident_not_found")
+    return result
+

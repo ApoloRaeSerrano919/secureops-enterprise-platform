@@ -88,3 +88,22 @@ def assign(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
+@app.post("/incidents/{incident_id}/ai-investigation")
+def ai_investigation(
+    incident_id: int,
+    payload: AIInvestigationRequest,
+    user: CurrentUser = Depends(get_current_user),
+):
+    try:
+        return summarize_incident(
+            incident_id,
+            analyst_prompt=payload.prompt,
+            actor_user_id=user.id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except LLMConfigurationError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except LLMProviderError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
+

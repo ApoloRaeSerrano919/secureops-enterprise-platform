@@ -10,3 +10,10 @@ TOKENS = {
     "admin-token": "admin@secureops.local",
 }
 
+@dataclass
+class CurrentUser:
+    id: int
+    email: str
+    name: str
+    role: str
+

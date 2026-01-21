@@ -140,3 +140,16 @@ def approve_tool(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
+@app.post("/incidents/{incident_id}/close")
+def close(
+    incident_id: int,
+    payload: IncidentCloseRequest,
+    user: CurrentUser = Depends(get_current_user),
+):
+    if user.role not in {"responder","admin"}:
+        raise HTTPException(status_code=403, detail="forbidden")
+    try:
+        return close_incident(incident_id, user.id, payload.resolution)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+

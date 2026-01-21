@@ -26,3 +26,11 @@ DEMO_TOKENS = {
 }
 
 
+@dataclass
+class CurrentUser:
+    id: int
+    email: str
+    name: str
+    role: str
+
+

@@ -124,3 +124,19 @@ def create_tool_request(
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
+@app.post("/tool-requests/{tool_request_id}/approval")
+def approve_tool(
+    tool_request_id: int,
+    payload: ToolApprovalRequest,
+    user: CurrentUser = Depends(get_current_user),
+):
+    try:
+        return approve_tool_request(
+            tool_request_id=tool_request_id,
+            approver=user,
+            decision=payload.decision,
+            comment=payload.comment,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+

@@ -34,3 +34,16 @@ class CurrentUser:
     role: str
 
 
+def _user_from_email(email: str) -> CurrentUser:
+    with SessionLocal() as db:
+        user = db.execute(select(User).where(User.email == email)).scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=401, detail="user_not_found")
+        return CurrentUser(
+            id=user.id,
+            email=user.email,
+            name=user.name,
+            role=user.role,
+        )
+
+

@@ -87,3 +87,24 @@ def _email_from_jwt(token: str) -> str:
     return email
 
 
+async def get_current_user(authorization: str | None = Header(default=None)) -> CurrentUser:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="missing_token")
+
+    token = authorization.removeprefix("Bearer ").strip()
+    mode = settings.auth_mode.lower()
+
+    if mode == "demo":
+        email = _email_from_demo_token(token)
+        if not email:
+            # Allow minted JWTs even in demo mode so teams can try JWT without flipping AUTH_MODE.
+            if token.count(".") == 2:
+                email = _email_from_jwt(token)
+            else:
+                raise HTTPException(status_code=401, detail="invalid_token")
+    elif mode in {"jwt", "oidc"}:
+        email = _email_from_jwt(token)
+    else:
+        raise HTTPException(status_code=500, detail="unsupported_auth_mode")
+
+    return _user_from_email(email)

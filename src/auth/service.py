@@ -51,3 +51,10 @@ def _email_from_demo_token(token: str) -> str | None:
     return DEMO_TOKENS.get(token)
 
 
+@lru_cache(maxsize=1)
+def _jwks_client() -> PyJWKClient:
+    if not settings.oidc_jwks_url:
+        raise HTTPException(status_code=500, detail="oidc_jwks_url_not_configured")
+    return PyJWKClient(settings.oidc_jwks_url)
+
+

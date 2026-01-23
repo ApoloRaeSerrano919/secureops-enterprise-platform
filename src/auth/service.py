@@ -47,3 +47,7 @@ def _user_from_email(email: str) -> CurrentUser:
         )
 
 
+def _email_from_demo_token(token: str) -> str | None:
+    return DEMO_TOKENS.get(token)
+
+

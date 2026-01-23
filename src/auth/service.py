@@ -58,3 +58,32 @@ def _jwks_client() -> PyJWKClient:
     return PyJWKClient(settings.oidc_jwks_url)
 
 
+def _email_from_jwt(token: str) -> str:
+    mode = settings.auth_mode.lower()
+    try:
+        if mode == "oidc":
+            signing_key = _jwks_client().get_signing_key_from_jwt(token)
+            payload = jwt.decode(
+                token,
+                signing_key.key,
+                algorithms=["RS256", "ES256"],
+                audience=settings.jwt_audience,
+                issuer=settings.jwt_issuer,
+            )
+        else:
+            payload = jwt.decode(
+                token,
+                settings.jwt_secret,
+                algorithms=[settings.jwt_algorithm],
+                audience=settings.jwt_audience,
+                issuer=settings.jwt_issuer,
+            )
+    except jwt.PyJWTError as exc:
+        raise HTTPException(status_code=401, detail=f"invalid_jwt:{exc.__class__.__name__}") from exc
+
+    email = payload.get("email") or payload.get("preferred_username") or payload.get("sub")
+    if not email or not isinstance(email, str):
+        raise HTTPException(status_code=401, detail="jwt_missing_identity_claim")
+    return email
+
+

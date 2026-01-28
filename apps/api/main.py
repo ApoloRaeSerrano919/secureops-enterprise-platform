@@ -35,3 +35,8 @@ async def observe_requests(request, call_next):
 def metrics():
     return metrics_response()
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+

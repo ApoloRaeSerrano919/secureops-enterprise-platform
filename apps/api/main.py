@@ -31,3 +31,7 @@ async def observe_requests(request, call_next):
     HTTP_REQUESTS.labels(request.method, request.url.path, response.status_code).inc()
     return response
 
+@app.get("/metrics")
+def metrics():
+    return metrics_response()
+

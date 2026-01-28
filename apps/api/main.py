@@ -25,3 +25,9 @@ app = FastAPI(
     description="Security event correlation with policy-gated response tools.",
  )
 
+@app.middleware("http")
+async def observe_requests(request, call_next):
+    response = await call_next(request)
+    HTTP_REQUESTS.labels(request.method, request.url.path, response.status_code).inc()
+    return response
+

@@ -75,19 +75,6 @@ def incident_detail(
         raise HTTPException(status_code=404, detail="incident_not_found")
     return result
 
-@app.post("/incidents/{incident_id}/assign")
-def assign(
-    incident_id: int,
-    payload: IncidentAssignRequest,
-    user: CurrentUser = Depends(get_current_user),
-):
-    if user.role not in {"responder","admin"}:
-        raise HTTPException(status_code=403, detail="forbidden")
-    try:
-        return assign_incident(incident_id, payload.user_id, user.id)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-
 @app.post("/incidents/{incident_id}/ai-investigation")
 def ai_investigation(
     incident_id: int,

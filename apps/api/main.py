@@ -40,3 +40,9 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/internal/probes/{service}/health")
+def service_health_probe(service: str):
+    """Local probe target for the real HTTP get_service_health adapter."""
+    return {"service": service, "status": "healthy", "source": "secureops-probe"}
+
+

@@ -54,3 +54,11 @@ def create_event(
     result = ingest_event(payload.model_dump())
     return result
 
+@app.post("/correlate")
+def correlate(
+    user: CurrentUser = Depends(get_current_user),
+):
+    if user.role not in {"responder","admin"}:
+        raise HTTPException(status_code=403, detail="forbidden")
+    return {"incidents": correlate_open_events()}
+

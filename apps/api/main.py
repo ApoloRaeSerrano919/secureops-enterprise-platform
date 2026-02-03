@@ -46,3 +46,11 @@ def service_health_probe(service: str):
     return {"service": service, "status": "healthy", "source": "secureops-probe"}
 
 
+@app.post("/events")
+def create_event(
+    payload: SecurityEventCreate,
+    user: CurrentUser = Depends(get_current_user),
+):
+    result = ingest_event(payload.model_dump())
+    return result
+

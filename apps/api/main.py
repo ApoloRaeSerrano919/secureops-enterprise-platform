@@ -62,3 +62,28 @@ def correlate(
         raise HTTPException(status_code=403, detail="forbidden")
     return {"incidents": correlate_open_events()}
 
+@app.get("/incidents")
+def list_incidents(
+    user: CurrentUser = Depends(get_current_user),
+):
+    with SessionLocal() as db:
+        rows = db.execute(
+            select(Incident).order_by(Incident.created_at.desc()).limit(100)
+        ).scalars().all()
+
+        return {
+            "incidents": [
+                {
+                    "id": x.id,
+                    "incident_number": x.incident_number,
+                    "title": x.title,
+                    "status": x.status,
+                    "severity": x.severity,
+                    "risk_score": x.risk_score,
+                    "principal": x.principal,
+                    "created_at": x.created_at,
+                }
+                for x in rows
+            ]
+        }
+

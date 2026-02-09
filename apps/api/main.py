@@ -151,3 +151,20 @@ def job_status(job_id: str, user: CurrentUser = Depends(get_current_user)):
         result["error"] = "job_failed"
     return result
 
+@app.post("/incidents/{incident_id}/tools")
+def create_tool_request(
+    incident_id: int,
+    payload: ToolRequestCreate,
+    user: CurrentUser = Depends(get_current_user),
+):
+    try:
+        return request_tool(
+            user=user,
+            incident_id=incident_id,
+            tool_name=payload.tool_name,
+            arguments=payload.arguments,
+            idempotency_key=payload.idempotency_key,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+

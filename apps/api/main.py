@@ -138,3 +138,16 @@ def ai_investigation_async(
     job_id = enqueue_investigation(incident_id, payload.prompt or "", user.id)
     return {"job_id": job_id, "status": "queued"}
 
+@app.get("/jobs/{job_id}")
+def job_status(job_id: str, user: CurrentUser = Depends(get_current_user)):
+    try:
+        job = Job.fetch(job_id, connection=Redis.from_url(settings.redis_url))
+    except Exception:
+        raise HTTPException(status_code=404, detail="job_not_found")
+    result = {"job_id": job.id, "status": job.get_status()}
+    if job.is_finished:
+        result["result"] = job.result
+    if job.is_failed:
+        result["error"] = "job_failed"
+    return result
+

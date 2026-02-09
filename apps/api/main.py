@@ -129,3 +129,12 @@ def ai_investigation(
     except LLMProviderError as exc:
         raise HTTPException(status_code=502, detail=str(exc))
 
+@app.post("/incidents/{incident_id}/ai-investigation/async")
+def ai_investigation_async(
+    incident_id: int,
+    payload: AIInvestigationRequest,
+    user: CurrentUser = Depends(get_current_user),
+):
+    job_id = enqueue_investigation(incident_id, payload.prompt or "", user.id)
+    return {"job_id": job_id, "status": "queued"}
+

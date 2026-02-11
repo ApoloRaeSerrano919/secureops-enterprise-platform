@@ -197,3 +197,27 @@ def close(
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 
+@app.get("/incidents/{incident_id}/audit")
+def audit(
+    incident_id: int,
+    user: CurrentUser = Depends(get_current_user),
+):
+    with SessionLocal() as db:
+        rows = db.execute(
+            select(AuditEvent)
+            .where(AuditEvent.incident_id == incident_id)
+            .order_by(AuditEvent.created_at)
+        ).scalars().all()
+
+        return {
+            "events": [
+                {
+                    "id": x.id,
+                    "action": x.action,
+                    "metadata": x.event_metadata,
+                    "actor_user_id": x.actor_user_id,
+                    "created_at": x.created_at,
+                }
+                for x in rows
+            ]
+        }

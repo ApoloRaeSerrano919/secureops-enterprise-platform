@@ -22,3 +22,11 @@ def search_security_knowledge(query: str, limit: int = 4) -> list[dict]:
     return [chunk.__dict__ for chunk in retrieve(query, limit)]
 
 
+@mcp.tool()
+def evaluate_action(role: str, tool_name: str) -> dict:
+    """Policy preview only. This never executes a tool."""
+    return evaluate_tool_policy(role, tool_name)
+
+
+if __name__ == "__main__":
+    mcp.run()

@@ -12,3 +12,8 @@ from src.tools.policy import evaluate_tool_policy
 mcp = FastMCP("secureops")
 
 
+@mcp.tool()
+def get_incident_context(incident_id: int) -> dict:
+    return get_incident(incident_id) or {"error": "incident_not_found"}
+
+

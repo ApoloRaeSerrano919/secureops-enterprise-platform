@@ -17,3 +17,8 @@ def get_incident_context(incident_id: int) -> dict:
     return get_incident(incident_id) or {"error": "incident_not_found"}
 
 
+@mcp.tool()
+def search_security_knowledge(query: str, limit: int = 4) -> list[dict]:
+    return [chunk.__dict__ for chunk in retrieve(query, limit)]
+
+

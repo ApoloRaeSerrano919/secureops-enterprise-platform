@@ -25,3 +25,8 @@ class RetrievedChunk:
     score: float
 
 
+@lru_cache(maxsize=1)
+def embedding_model() -> SentenceTransformer:
+    return SentenceTransformer(settings.embedding_model)
+
+

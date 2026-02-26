@@ -30,3 +30,8 @@ def embedding_model() -> SentenceTransformer:
     return SentenceTransformer(settings.embedding_model)
 
 
+def embed(text_value: str) -> list[float]:
+    vector = embedding_model().encode(text_value, normalize_embeddings=True)
+    return vector.tolist()
+
+

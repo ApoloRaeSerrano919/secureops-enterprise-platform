@@ -35,3 +35,27 @@ def embed(text_value: str) -> list[float]:
     return vector.tolist()
 
 
+def index_documents(documents: Iterable[tuple[str, str]]) -> int:
+    count = 0
+    with SessionLocal() as db:
+        db.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        db.execute(text("""
+            CREATE TABLE IF NOT EXISTS knowledge_chunks (
+                id BIGSERIAL PRIMARY KEY,
+                title TEXT NOT NULL,
+                chunk_text TEXT NOT NULL,
+                embedding vector(384) NOT NULL,
+                created_at TIMESTAMPTZ DEFAULT now()
+            )
+        """))
+        for title, chunk in documents:
+            vector = embed(chunk)
+            db.execute(
+                text("INSERT INTO knowledge_chunks(title, chunk_text, embedding) VALUES (:t, :c, CAST(:e AS vector))"),
+                {"t": title, "c": chunk, "e": str(vector)},
+            )
+            count += 1
+        db.commit()
+    return count
+
+

@@ -59,3 +59,17 @@ def index_documents(documents: Iterable[tuple[str, str]]) -> int:
     return count
 
 
+def retrieve(query: str, limit: int | None = None) -> list[RetrievedChunk]:
+    k = limit or settings.rag_top_k
+    vector = embed(query)
+    with SessionLocal() as db:
+        rows = db.execute(
+            text("""
+                SELECT id, title, chunk_text, 1 - (embedding <=> CAST(:embedding AS vector)) AS score
+                FROM knowledge_chunks
+                ORDER BY embedding <=> CAST(:embedding AS vector)
+                LIMIT :limit
+            """),
+            {"embedding": str(vector), "limit": k},
+        ).mappings().all()
+    return [RetrievedChunk(r["id"], r["title"], r["chunk_text"], float(r["score"])) for r in rows]

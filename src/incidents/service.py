@@ -43,23 +43,6 @@ def get_incident(incident_id: int) -> dict | None:
             ],
         }
 
-def assign_incident(incident_id: int, user_id: int, actor_id: int) -> dict:
-    with SessionLocal() as db:
-        incident = db.get(Incident, incident_id)
-        if not incident:
-            raise ValueError("incident_not_found")
-
-        incident.assigned_to = user_id
-        incident.status = "INVESTIGATING"
-        db.add(AuditEvent(
-            incident_id=incident_id,
-            actor_user_id=actor_id,
-            action="incident_assigned",
-            event_metadata={"assigned_to": user_id},
-        ))
-        db.commit()
-        return {"incident_id": incident_id, "assigned_to": user_id, "status": incident.status}
-
 def close_incident(incident_id: int, actor_id: int, resolution: str) -> dict:
     with SessionLocal() as db:
         incident = db.get(Incident, incident_id)

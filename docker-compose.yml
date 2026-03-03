@@ -1,0 +1,66 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: secureops
+      POSTGRES_PASSWORD: secureops
+      POSTGRES_DB: secureops
+    ports:
+      - "5435:5432"
+    volumes:
+      - secureops_pg:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6382:6379"
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://secureops:secureops@db:5432/secureops
+      REDIS_URL: redis://redis:6379/0
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      SERVICE_HEALTH_BASE_URL: http://api:8200/internal/probes
+    command: uvicorn apps.api.main:app --host 0.0.0.0 --port 8200
+    ports:
+      - "8200:8200"
+    depends_on: [db, redis]
+
+  worker:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://secureops:secureops@db:5432/secureops
+      REDIS_URL: redis://redis:6379/0
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      SERVICE_HEALTH_BASE_URL: http://api:8200/internal/probes
+    command: python workers/rq_worker.py
+    depends_on: [db, redis]
+
+  correlation-worker:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://secureops:secureops@db:5432/secureops
+    command: python workers/correlation_worker.py
+    depends_on: [db]
+
+  event-gateway:
+    build: ./services/event-gateway
+    environment:
+      SECUREOPS_API_URL: http://api:8200
+      SECUREOPS_API_TOKEN: analyst-token
+    ports:
+      - "8300:8300"
+    depends_on: [api]
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.3.2
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+

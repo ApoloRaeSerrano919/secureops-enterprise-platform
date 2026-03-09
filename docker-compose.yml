@@ -64,3 +64,6 @@ services:
     volumes:
       - mlflow_data:/mlflow
 
+volumes:
+  secureops_pg:
+  mlflow_data:

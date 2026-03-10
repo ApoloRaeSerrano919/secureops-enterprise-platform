@@ -130,3 +130,59 @@ def approve_tool_request(*, tool_request_id: int, approver, decision: str, comme
         "status": "REJECTED",
     }
 
+def execute_tool_request(tool_request_id: int) -> dict:
+    with SessionLocal() as db:
+        req = db.get(ToolRequest, tool_request_id)
+        if not req:
+            raise ValueError("tool_request_not_found")
+
+        if req.status not in {"APPROVED"}:
+            raise ValueError("tool_request_not_approved")
+
+        handler = TOOL_HANDLERS.get(req.tool_name)
+        if not handler:
+            raise ValueError("tool_handler_not_found")
+
+        try:
+            result = handler(req.arguments)
+            req.result = result
+            req.status = "EXECUTED"
+            req.completed_at = datetime.now(timezone.utc)
+
+            db.add(AuditEvent(
+                incident_id=req.incident_id,
+                actor_user_id=req.requested_by,
+                action="tool_executed",
+                event_metadata={
+                    "tool_request_id": req.id,
+                    "tool": req.tool_name,
+                    "result": result,
+                },
+            ))
+
+            db.commit()
+
+            return {
+                "tool_request_id": req.id,
+                "status": "EXECUTED",
+                "result": result,
+            }
+
+        except Exception as exc:
+            req.status = "FAILED"
+            req.result = {"error": str(exc)}
+            req.completed_at = datetime.now(timezone.utc)
+
+            db.add(AuditEvent(
+                incident_id=req.incident_id,
+                actor_user_id=req.requested_by,
+                action="tool_execution_failed",
+                event_metadata={
+                    "tool_request_id": req.id,
+                    "tool": req.tool_name,
+                    "error": str(exc),
+                },
+            ))
+
+            db.commit()
+            raise

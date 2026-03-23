@@ -84,52 +84,6 @@ def request_tool(*, user, incident_id: int, tool_name: str, arguments: dict, ide
         "approval_required": True,
     }
 
-def approve_tool_request(*, tool_request_id: int, approver, decision: str, comment: str = "") -> dict:
-    if approver.role not in {"responder","admin"}:
-        raise ValueError("approver_role_not_allowed")
-
-    with SessionLocal() as db:
-        req = db.get(ToolRequest, tool_request_id)
-        if not req:
-            raise ValueError("tool_request_not_found")
-
-        if req.status != "PENDING_APPROVAL":
-            raise ValueError("tool_request_not_pending")
-
-        normalized = decision.upper()
-        if normalized not in {"APPROVED","REJECTED"}:
-            raise ValueError("invalid_decision")
-
-        db.add(ToolApproval(
-            tool_request_id=req.id,
-            approver_id=approver.id,
-            decision=normalized,
-            comment=comment or None,
-        ))
-
-        req.status = normalized
-
-        db.add(AuditEvent(
-            incident_id=req.incident_id,
-            actor_user_id=approver.id,
-            action="tool_request_approved" if normalized == "APPROVED" else "tool_request_rejected",
-            event_metadata={
-                "tool_request_id": req.id,
-                "tool": req.tool_name,
-                "comment": comment,
-            },
-        ))
-
-        db.commit()
-
-    if normalized == "APPROVED":
-        return execute_tool_request(tool_request_id)
-
-    return {
-        "tool_request_id": tool_request_id,
-        "status": "REJECTED",
-    }
-
 def execute_tool_request(tool_request_id: int) -> dict:
     with SessionLocal() as db:
         req = db.get(ToolRequest, tool_request_id)

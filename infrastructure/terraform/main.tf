@@ -32,3 +32,7 @@ resource "aws_cloudwatch_log_group" "worker" {
   retention_in_days = 30
 }
 
+resource "aws_secretsmanager_secret" "database" {
+  name = "${var.project_name}/database-url"
+}
+

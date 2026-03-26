@@ -36,3 +36,7 @@ resource "aws_secretsmanager_secret" "database" {
   name = "${var.project_name}/database-url"
 }
 
+resource "aws_secretsmanager_secret" "llm_api_key" {
+  name = "${var.project_name}/llm-api-key"
+}
+

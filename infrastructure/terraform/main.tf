@@ -27,3 +27,8 @@ resource "aws_cloudwatch_log_group" "api" {
   retention_in_days = 30
 }
 
+resource "aws_cloudwatch_log_group" "worker" {
+  name              = "/${var.project_name}/worker"
+  retention_in_days = 30
+}
+

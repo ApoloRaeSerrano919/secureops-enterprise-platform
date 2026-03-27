@@ -40,3 +40,18 @@ resource "aws_secretsmanager_secret" "llm_api_key" {
   name = "${var.project_name}/llm-api-key"
 }
 
+data "aws_iam_policy_document" "workload" {
+  statement {
+    sid       = "ReadRuntimeSecrets"
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.database.arn, aws_secretsmanager_secret.llm_api_key.arn]
+  }
+  statement {
+    sid       = "WriteApplicationLogs"
+    effect    = "Allow"
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.api.arn}:*", "${aws_cloudwatch_log_group.worker.arn}:*"]
+  }
+}
+

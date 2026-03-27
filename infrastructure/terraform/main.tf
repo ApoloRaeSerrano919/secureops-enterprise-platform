@@ -55,3 +55,8 @@ data "aws_iam_policy_document" "workload" {
   }
 }
 
+resource "aws_iam_policy" "workload" {
+  name   = "${var.project_name}-workload-least-privilege"
+  policy = data.aws_iam_policy_document.workload.json
+}
+

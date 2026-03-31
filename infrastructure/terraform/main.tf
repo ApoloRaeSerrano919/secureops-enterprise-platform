@@ -60,3 +60,20 @@ resource "aws_iam_policy" "workload" {
   policy = data.aws_iam_policy_document.workload.json
 }
 
+data "aws_iam_policy_document" "irsa_assume" {
+  count = var.eks_oidc_provider_arn == "" ? 0 : 1
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type        = "Federated"
+      identifiers = [var.eks_oidc_provider_arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${var.eks_oidc_provider_url}:sub"
+      values   = ["system:serviceaccount:${var.k8s_namespace}:${var.k8s_service_account}"]
+    }
+  }
+}
+

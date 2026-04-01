@@ -83,3 +83,9 @@ resource "aws_iam_role" "workload" {
   assume_role_policy = data.aws_iam_policy_document.irsa_assume[0].json
 }
 
+resource "aws_iam_role_policy_attachment" "workload" {
+  count      = var.eks_oidc_provider_arn == "" ? 0 : 1
+  role       = aws_iam_role.workload[0].name
+  policy_arn = aws_iam_policy.workload.arn
+}
+

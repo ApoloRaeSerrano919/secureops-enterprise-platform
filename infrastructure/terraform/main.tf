@@ -77,3 +77,9 @@ data "aws_iam_policy_document" "irsa_assume" {
   }
 }
 
+resource "aws_iam_role" "workload" {
+  count              = var.eks_oidc_provider_arn == "" ? 0 : 1
+  name               = "${var.project_name}-workload"
+  assume_role_policy = data.aws_iam_policy_document.irsa_assume[0].json
+}
+

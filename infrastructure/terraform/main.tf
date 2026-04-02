@@ -89,3 +89,14 @@ resource "aws_iam_role_policy_attachment" "workload" {
   policy_arn = aws_iam_policy.workload.arn
 }
 
+resource "aws_cloudwatch_metric_alarm" "api_errors" {
+  alarm_name          = "${var.project_name}-api-5xx"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "5XXError"
+  namespace           = "SecureOps"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 5
+  treat_missing_data  = "notBreaching"
+}

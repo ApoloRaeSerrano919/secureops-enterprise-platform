@@ -8,3 +8,9 @@ variable "project_name" {
   default = "secureops"
 }
 
+variable "eks_oidc_provider_arn" {
+  type        = string
+  default     = ""
+  description = "Optional EKS OIDC provider ARN for IRSA. Leave empty when unused."
+}
+

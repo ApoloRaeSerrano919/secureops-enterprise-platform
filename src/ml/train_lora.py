@@ -1,0 +1,25 @@
+"""LoRA/QLoRA fine-tune using Hugging Face PEFT.
+
+Run a short LoRA fine-tune on CPU/GPU with --mode lora. QLoRA requires a
+supported CUDA Linux setup and the optional requirements-ml-gpu.txt deps;
+without CUDA, the CLI exits with a clear skip reason.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import mlflow
+import torch
+from peft import LoraConfig, TaskType, get_peft_model
+from torch.optim import AdamW
+from torch.utils.data import DataLoader, Dataset
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, BitsAndBytesConfig
+
+from src.config.settings import settings
+from src.ml.tracking import configure_mlflow
+
+LABELS = {"low": 0, "medium": 1, "high": 2, "critical": 3}
+
+

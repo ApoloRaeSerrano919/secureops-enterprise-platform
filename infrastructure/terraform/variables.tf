@@ -14,3 +14,9 @@ variable "eks_oidc_provider_arn" {
   description = "Optional EKS OIDC provider ARN for IRSA. Leave empty when unused."
 }
 
+variable "eks_oidc_provider_url" {
+  type        = string
+  default     = ""
+  description = "OIDC issuer URL without https:// when enabling IRSA."
+}
+

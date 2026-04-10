@@ -41,3 +41,10 @@ class EventDataset(Dataset):
         return item
 
 
+def _from_pretrained(loader, *args, **kwargs):
+    try:
+        return loader(*args, **kwargs)
+    except Exception:
+        return loader(*args, local_files_only=True, **kwargs)
+
+

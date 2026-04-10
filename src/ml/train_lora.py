@@ -48,3 +48,26 @@ def _from_pretrained(loader, *args, **kwargs):
         return loader(*args, local_files_only=True, **kwargs)
 
 
+def build_model(mode: str):
+    quantization = None
+    if mode == "qlora":
+        if not torch.cuda.is_available():
+            raise RuntimeError("qlora_requires_cuda")
+        quantization = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16)
+    tokenizer = _from_pretrained(AutoTokenizer.from_pretrained, settings.training_base_model)
+    model = _from_pretrained(
+        AutoModelForSequenceClassification.from_pretrained,
+        settings.training_base_model,
+        num_labels=len(LABELS),
+        quantization_config=quantization,
+    )
+    config = LoraConfig(
+        task_type=TaskType.SEQ_CLS,
+        r=8,
+        lora_alpha=16,
+        lora_dropout=0.05,
+        target_modules=["q_lin", "v_lin"],
+    )
+    return tokenizer, get_peft_model(model, config)
+
+

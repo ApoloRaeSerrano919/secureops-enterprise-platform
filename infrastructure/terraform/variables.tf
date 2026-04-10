@@ -20,3 +20,8 @@ variable "eks_oidc_provider_url" {
   description = "OIDC issuer URL without https:// when enabling IRSA."
 }
 
+variable "k8s_namespace" {
+  type    = string
+  default = "secureops"
+}
+

@@ -25,3 +25,7 @@ variable "k8s_namespace" {
   default = "secureops"
 }
 
+variable "k8s_service_account" {
+  type    = string
+  default = "secureops-api"
+}

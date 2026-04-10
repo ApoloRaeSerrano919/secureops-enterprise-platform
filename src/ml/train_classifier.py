@@ -37,3 +37,32 @@ class EventDataset(Dataset):
         return item
 
 
+def train(data_path: str = "data/training/events.jsonl", epochs: int = 1):
+    rows = [json.loads(line) for line in Path(data_path).read_text().splitlines() if line.strip()]
+    tokenizer = AutoTokenizer.from_pretrained(settings.training_base_model)
+    model = AutoModelForSequenceClassification.from_pretrained(settings.training_base_model, num_labels=len(LABELS))
+    loader = DataLoader(EventDataset(rows, tokenizer), batch_size=4, shuffle=True)
+    optimizer = AdamW(model.parameters(), lr=2e-5)
+
+    configure_mlflow("secureops-event-severity")
+    with mlflow.start_run():
+        mlflow.log_params({"base_model": settings.training_base_model, "epochs": epochs, "samples": len(rows)})
+        model.train()
+        final_loss = 0.0
+        for _ in range(epochs):
+            for batch in loader:
+                optimizer.zero_grad()
+                output = model(**batch)
+                output.loss.backward()
+                optimizer.step()
+                final_loss = float(output.loss.detach().cpu())
+        mlflow.log_metric("final_train_loss", final_loss)
+        Path("artifacts/severity-model").mkdir(parents=True, exist_ok=True)
+        model.save_pretrained("artifacts/severity-model")
+        tokenizer.save_pretrained("artifacts/severity-model")
+        mlflow.log_artifacts("artifacts/severity-model", artifact_path="model")
+    return {"samples": len(rows), "final_train_loss": final_loss}
+
+
+if __name__ == "__main__":
+    print(train())

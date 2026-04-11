@@ -71,3 +71,60 @@ def build_model(mode: str):
     return tokenizer, get_peft_model(model, config)
 
 
+def train(
+    mode: str = "lora",
+    data_path: str = "data/training/events.jsonl",
+    epochs: int = 1,
+) -> dict:
+    tokenizer, model = build_model(mode)
+    model.print_trainable_parameters()
+
+    rows = [json.loads(line) for line in Path(data_path).read_text().splitlines() if line.strip()]
+    loader = DataLoader(EventDataset(rows, tokenizer), batch_size=4, shuffle=True)
+    optimizer = AdamW(model.parameters(), lr=2e-4)
+
+    configure_mlflow("secureops-lora-severity")
+    with mlflow.start_run():
+        mlflow.log_params(
+            {
+                "mode": mode,
+                "base_model": settings.training_base_model,
+                "epochs": epochs,
+                "samples": len(rows),
+            }
+        )
+        model.train()
+        final_loss = 0.0
+        for _ in range(epochs):
+            for batch in loader:
+                optimizer.zero_grad()
+                output = model(**batch)
+                output.loss.backward()
+                optimizer.step()
+                final_loss = float(output.loss.detach().cpu())
+        mlflow.log_metric("final_train_loss", final_loss)
+        out_dir = Path(f"artifacts/lora-{mode}-model")
+        out_dir.mkdir(parents=True, exist_ok=True)
+        model.save_pretrained(out_dir)
+        tokenizer.save_pretrained(out_dir)
+        mlflow.log_artifacts(str(out_dir), artifact_path="model")
+
+    return {
+        "mode": mode,
+        "samples": len(rows),
+        "final_train_loss": final_loss,
+        "tokenizer": tokenizer.name_or_path,
+    }
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["lora", "qlora"], default="lora")
+    args = parser.parse_args()
+    try:
+        print(train(mode=args.mode))
+    except RuntimeError as exc:
+        if str(exc) == "qlora_requires_cuda":
+            print({"mode": args.mode, "skipped_train": True, "reason": "cuda_unavailable"})
+        else:
+            raise

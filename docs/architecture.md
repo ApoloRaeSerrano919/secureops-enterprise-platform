@@ -16,3 +16,12 @@ An incident is the durable case object. Events stay immutable and link through `
 
 `src/ai/investigator.py` calls the OpenAI Responses API through `src/ai/llm_client.py`, validates structured output (summary, observations, hypotheses, cited event IDs, recommended actions), and stores the result on the incident. Recommendations are advisory only; the investigator has no credentials to run tools.
 
+## Tool gateway
+
+1. Allowlist
+2. Role check
+3. Risk class
+4. Human approval when required
+5. Adapter (simulated)
+6. Audit row
+

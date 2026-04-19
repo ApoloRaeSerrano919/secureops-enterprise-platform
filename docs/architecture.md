@@ -25,3 +25,7 @@ An incident is the durable case object. Events stay immutable and link through `
 5. Adapter (simulated)
 6. Audit row
 
+## Idempotency
+
+Tool requests carry an idempotency key so retries do not double-run containment.
+

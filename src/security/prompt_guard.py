@@ -14,3 +14,9 @@ PATTERNS = [
     (re.compile(r"system prompt", re.I), "system_prompt_extraction"),
 ]
 
+def inspect_prompt(text: str) -> GuardResult:
+    normalized = " ".join(text.split())
+    for pattern, reason in PATTERNS:
+        if pattern.search(normalized):
+            return GuardResult(False, reason)
+    return GuardResult(True)

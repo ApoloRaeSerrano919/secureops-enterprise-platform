@@ -36,3 +36,25 @@ def test_jwt_roundtrip_email_claim(monkeypatch):
     assert auth_service._email_from_jwt(token) == "analyst@secureops.local"
 
 
+def test_jwt_rejects_bad_signature(monkeypatch):
+    monkeypatch.setattr(settings, "auth_mode", "jwt")
+    monkeypatch.setattr(settings, "jwt_secret", "test-secret")
+    monkeypatch.setattr(settings, "jwt_issuer", "secureops-local")
+    monkeypatch.setattr(settings, "jwt_audience", "secureops-api")
+    monkeypatch.setattr(settings, "jwt_algorithm", "HS256")
+
+    now = datetime.now(timezone.utc)
+    token = jwt.encode(
+        {
+            "email": "analyst@secureops.local",
+            "iss": "secureops-local",
+            "aud": "secureops-api",
+            "iat": now,
+            "exp": now + timedelta(hours=1),
+        },
+        "wrong-secret",
+        algorithm="HS256",
+    )
+    with pytest.raises(HTTPException) as exc:
+        auth_service._email_from_jwt(token)
+    assert exc.value.status_code == 401

@@ -24,3 +24,9 @@ Client retries the same revocation.
 
 Control: unique idempotency key on `tool_requests`.
 
+## Audit gaps
+
+Decisions must be reconstructable.
+
+Control: append-only structured audit events for correlation, summaries, requests, approvals, and executions.
+

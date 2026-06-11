@@ -30,3 +30,8 @@ Decisions must be reconstructable.
 
 Control: append-only structured audit events for correlation, summaries, requests, approvals, and executions.
 
+## Compromised investigator
+
+Even a bad summary must not hold infra credentials.
+
+Control: no direct privileged adapter; the tool gateway is the only execution path.

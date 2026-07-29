@@ -12,6 +12,12 @@ A high-risk action is proposed.
 
 Controls: allowlist; role policy; human approval; argument checks; idempotency.
 
+## Privilege escalation
+
+An analyst calls responder/admin tools.
+
+Control: policy in application code before any adapter runs.
+
 ## Duplicate containment
 
 Client retries the same revocation.

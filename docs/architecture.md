@@ -24,3 +24,12 @@ An incident is the durable case object. Events stay immutable and link through `
 
 Synchronous path: `POST /incidents/{id}/ai-investigation`. Async path: Redis/RQ via `POST /incidents/{id}/ai-investigation/async` and `GET /jobs/{job_id}`. The investigator has no credentials to run tools; recommendations are advisory only.
 
+## Tool gateway
+
+1. Allowlist
+2. Role check
+3. Risk class
+4. Human approval when required
+5. Adapter (`get_service_health` uses real HTTP when `SERVICE_HEALTH_BASE_URL` is set; others simulated)
+6. Audit row
+

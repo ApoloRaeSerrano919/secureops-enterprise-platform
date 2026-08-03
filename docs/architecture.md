@@ -33,3 +33,7 @@ Synchronous path: `POST /incidents/{id}/ai-investigation`. Async path: Redis/RQ 
 5. Adapter (`get_service_health` uses real HTTP when `SERVICE_HEALTH_BASE_URL` is set; others simulated)
 6. Audit row
 
+## Idempotency
+
+Tool requests carry an idempotency key so retries do not double-run containment.
+

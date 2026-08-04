@@ -37,3 +37,6 @@ Synchronous path: `POST /incidents/{id}/ai-investigation`. Async path: Redis/RQ 
 
 Tool requests carry an idempotency key so retries do not double-run containment.
 
+## Approval
+
+High-risk actions (e.g. `revoke_session`) stay `PENDING_APPROVAL` until a responder or admin approves.

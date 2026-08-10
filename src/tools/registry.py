@@ -6,3 +6,6 @@ class PrincipalArgs(BaseModel):
 class ServiceArgs(BaseModel):
     service: str = Field(min_length=2, max_length=120)
 
+class SessionArgs(BaseModel):
+    session_id: str = Field(min_length=3, max_length=255)
+

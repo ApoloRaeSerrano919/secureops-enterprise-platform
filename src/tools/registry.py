@@ -18,3 +18,11 @@ def get_auth_activity(arguments: dict) -> dict:
         "last_seen_ip": "185.199.110.42",
     }
 
+def get_service_health(arguments: dict) -> dict:
+    args = ServiceArgs(**arguments)
+    return {
+        "service": args.service,
+        "status": "healthy",
+        "error_rate": 0.7,
+    }
+

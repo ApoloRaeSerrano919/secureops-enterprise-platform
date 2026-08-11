@@ -18,3 +18,9 @@ An analyst calls responder/admin tools.
 
 Control: policy in application code before any adapter runs.
 
+## Duplicate containment
+
+Client retries the same revocation.
+
+Control: unique idempotency key on `tool_requests`.
+

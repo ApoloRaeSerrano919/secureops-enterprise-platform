@@ -26,3 +26,11 @@ def get_service_health(arguments: dict) -> dict:
         "error_rate": 0.7,
     }
 
+def revoke_session(arguments: dict) -> dict:
+    args = SessionArgs(**arguments)
+    return {
+        "session_id": args.session_id,
+        "action": "revoke_session",
+        "result": "simulated_success",
+    }
+

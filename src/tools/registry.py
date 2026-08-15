@@ -34,3 +34,17 @@ def revoke_session(arguments: dict) -> dict:
         "result": "simulated_success",
     }
 
+def isolate_service(arguments: dict) -> dict:
+    args = ServiceArgs(**arguments)
+    return {
+        "service": args.service,
+        "action": "isolate_service",
+        "result": "simulated_success",
+    }
+
+TOOL_HANDLERS = {
+    "get_auth_activity": get_auth_activity,
+    "get_service_health": get_service_health,
+    "revoke_session": revoke_session,
+    "isolate_service": isolate_service,
+}

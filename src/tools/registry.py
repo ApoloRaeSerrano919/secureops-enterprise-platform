@@ -26,3 +26,44 @@ def get_auth_activity(arguments: dict) -> dict:
     }
 
 
+def get_service_health(arguments: dict) -> dict:
+    """Read-only health probe.
+
+    When SERVICE_HEALTH_BASE_URL is set, performs a real outbound HTTP GET to
+    ``{base}/{service}/health`` (still subject to policy/RBAC before execution).
+    When unset/empty, returns a simulated payload.
+    """
+    args = ServiceArgs(**arguments)
+    base = (settings.service_health_base_url or "").rstrip("/")
+    if not base:
+        return {
+            "service": args.service,
+            "status": "healthy",
+            "error_rate": 0.7,
+            "mode": "simulated",
+        }
+
+    url = f"{base}/{args.service}/health"
+    try:
+        with httpx.Client(timeout=settings.service_health_timeout_seconds) as client:
+            response = client.get(url)
+            response.raise_for_status()
+            body = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"raw": response.text}
+    except httpx.HTTPError as exc:
+        return {
+            "service": args.service,
+            "status": "unreachable",
+            "mode": "http",
+            "url": url,
+            "error": exc.__class__.__name__,
+        }
+
+    return {
+        "service": args.service,
+        "status": body.get("status", "unknown") if isinstance(body, dict) else "unknown",
+        "mode": "http",
+        "url": url,
+        "upstream": body,
+    }
+
+

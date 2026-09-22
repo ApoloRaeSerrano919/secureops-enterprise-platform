@@ -1,0 +1,4 @@
+-r requirements-rag.txt
+# LoRA / PEFT study extras (CPU or GPU). For QLoRA on CUDA, also install requirements-ml-gpu.txt.
+peft>=0.17,<1
+accelerate>=1.10,<2

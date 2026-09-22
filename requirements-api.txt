@@ -1,0 +1,14 @@
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+pydantic==2.11.7
+pydantic-settings==2.10.1
+sqlalchemy==2.0.43
+alembic==1.16.4
+psycopg[binary]==3.2.13
+pgvector==0.4.1
+redis==6.4.0
+rq==2.5.0
+httpx==0.28.1
+prometheus-client==0.22.1
+PyJWT[crypto]==2.10.1
+mcp>=1.13,<2

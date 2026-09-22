@@ -1,0 +1,2 @@
+# API / worker runtime (no torch). Used by Dockerfile and local host fallback.
+-r requirements-api.txt
